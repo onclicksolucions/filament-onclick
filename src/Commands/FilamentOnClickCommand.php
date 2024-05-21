@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Process;
 
 class FilamentOnClickCommand extends Command
 {
-    public $signature = 'filament-onclick:install';
+    public $signature = 'filament-onclick:setup';
 
     public $description = 'Install required deps';
 

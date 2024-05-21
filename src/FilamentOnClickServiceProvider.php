@@ -53,6 +53,8 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
         //     $package->hasTranslations();
         // }
 
+        $package->hasCommands($this->getCommands());
+
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }

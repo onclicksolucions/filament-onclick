@@ -1,6 +1,6 @@
 <?php
 
-namespace OnClick\FilamentOnClick;
+namespace OnClick\FilamentOnClick\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Field;
