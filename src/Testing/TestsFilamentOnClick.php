@@ -1,13 +1,13 @@
 <?php
 
-namespace VendorName\Skeleton\Testing;
+namespace OnClick\FilamentOnClick\Testing;
 
 use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @mixin Testable
  */
-class TestsSkeleton
+class TestsFilamentOnClick
 {
     //
 }
