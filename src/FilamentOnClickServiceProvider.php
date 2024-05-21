@@ -2,19 +2,20 @@
 
 namespace OnClick\FilamentOnClick;
 
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Asset;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
+use Illuminate\Support\Facades\Process;
 use Spatie\LaravelPackageTools\Package;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\AlpineComponent;
+use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use OnClick\FilamentOnClick\Commands\FilamentOnClickCommand;
+use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use OnClick\FilamentOnClick\Testing\TestsFilamentOnClick;
+use OnClick\FilamentOnClick\Commands\FilamentOnClickCommand;
 
 class FilamentOnClickServiceProvider extends PackageServiceProvider
 {
@@ -32,7 +33,14 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
-                // $command
+                $command->copyAndRegisterServiceProviderInApp()
+                        ->publish('js')
+                        ->endWith(function (InstallCommand $installCommand) {
+                            $installCommand->info("Instal·lant dependències NPM...");
+                            Process::run('npm i lodash.camelcase vue@latest @vitejs/plugin-vue -S');
+
+                            $installCommand->info('Configurat correctament!');
+                        });
                     // ->publishConfigFile()
                     // ->publishMigrations()
                     // ->askToRunMigrations()
@@ -41,6 +49,10 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
 
         $configFileName = $package->shortName();
 
+        $this->publishes([
+            __DIR__ . '/../resources/js/app.js' => resource_path('js/app.js'),
+            __DIR__ . '/../resources/js/components/SampleComponent.vue' => resource_path('js/components/SampleComponent.vue'),
+        ], 'js');
         // if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
         //     $package->hasConfigFile();
         // }
