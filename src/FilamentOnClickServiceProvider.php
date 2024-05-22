@@ -34,22 +34,34 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command->copyAndRegisterServiceProviderInApp()
-                        ->publish('js')
-                        ->endWith(function (InstallCommand $installCommand) {
-                            $installCommand->info("Instal·lant dependències NPM...");
-                            Process::run('npm i lodash.camelcase vue@latest @vitejs/plugin-vue -S');
+                    ->endWith(function (InstallCommand $installCommand) {
+                        $installCommand->info("Instal·lant dependències NPM...");
+                        Process::run(
+                            'npm i lodash lodash.camelcase vue@latest laravel-vite-plugin @vitejs/plugin-vue -S',
+                            function (string $type, string $output) {
+                                echo $output;
+                            }
+                        );
 
-                            $installCommand->info('Configurat correctament!');
-                        });
-                    // ->publishConfigFile()
-                    // ->publishMigrations()
-                    // ->askToRunMigrations()
-                    // ->askToStarRepoOnGitHub('onclicksolucions/filament-onclick');
+                        $installCommand->info("Copiant arxius js...");
+
+                        if ($installCommand->confirm('Es modificaran els arxius vite.config.js i resources/js/app.js. Vols continuar?', true)) {
+                            $curDir = __DIR__;
+                            Process::run("cp {$curDir}/../vite.config.js " . base_path('vite.config.js'));
+                            Process::run("cp {$curDir}/../resources/js/app.js " . resource_path('js/app.js'));
+                            Process::run("cp -r {$curDir}/../resources/js/components " . resource_path('js/components'));
+                        }
+
+                        $installCommand->info('Configurat correctament!');
+                    });
+                // ->publishConfigFile()
+                // ->publishMigrations()
+                // ->askToRunMigrations()
+                // ->askToStarRepoOnGitHub('onclicksolucions/filament-onclick');
             });
 
         $configFileName = $package->shortName();
 
-        
         // if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
         //     $package->hasConfigFile();
         // }
@@ -90,12 +102,6 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
         // FilamentIcon::register($this->getIcons());
 
         // // Handle Stubs
-        if (app()->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../resources/js/app.js' => resource_path('js/app.js'),
-                __DIR__ . '/../resources/js/components/SampleComponent.vue' => resource_path('js/components/SampleComponent.vue'),
-            ], 'js');
-        }
         // if (app()->runningInConsole()) {
         //     foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
         //         $this->publishes([
