@@ -49,10 +49,7 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
 
         $configFileName = $package->shortName();
 
-        $this->publishes([
-            __DIR__ . '/../resources/js/app.js' => resource_path('js/app.js'),
-            __DIR__ . '/../resources/js/components/SampleComponent.vue' => resource_path('js/components/SampleComponent.vue'),
-        ], 'js');
+        
         // if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
         //     $package->hasConfigFile();
         // }
@@ -93,6 +90,12 @@ class FilamentOnClickServiceProvider extends PackageServiceProvider
         // FilamentIcon::register($this->getIcons());
 
         // // Handle Stubs
+        if (app()->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../resources/js/app.js' => resource_path('js/app.js'),
+                __DIR__ . '/../resources/js/components/SampleComponent.vue' => resource_path('js/components/SampleComponent.vue'),
+            ], 'js');
+        }
         // if (app()->runningInConsole()) {
         //     foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
         //         $this->publishes([
