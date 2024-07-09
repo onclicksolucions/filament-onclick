@@ -9,6 +9,10 @@
     <div 
         x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }"
         x-init="
+            if (window.states) {
+                window.states['{{ $uuid }}'] = state;
+            }
+
             window.addEventListener('vue-state-change.{{ $uuid }}', (e) => {
                 state = e.state;
             });
